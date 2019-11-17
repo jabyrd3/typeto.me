@@ -1,16 +1,11 @@
 (function () {
     'use strict';
     let express = require('express');
-    let http = require('http');
     let app = module.exports = express();
-    let server = http.createServer(app);
     let bodyParser = require('body-parser');
     let cookieParser = require('cookie-parser');
-    let methodOverride = require('method-override');
     let io = require('socket.io');
-    // .listen(server);
     let fs = require('fs');
-    let eco = require('eco');
     let config = {};
     // io.settings['log level'] = 1;
     let Client = (function () {
@@ -69,30 +64,16 @@
         return results;
     };
     app.set('views', __dirname + '/views');
-    app.engine('eco', function (filePath, options, callback) {
-        fs.readFile(filePath, 'utf8', (err, body) => {
-            if (err) {
-                console.log('err fetcing view', err);
-            }
-            var bodyLayout = eco.render(body, options);
-            fs.readFile(__dirname + '/views/layout.eco', 'utf8', function (err, layout) {
-                if (err) {
-                    console.log('err fetching layout.eco');
-                }
-                var opts = Object.assign(options, {
-                    body: bodyLayout,
-                    config: config
-                });
-                return callback(null, eco.render(layout, opts));
-            });
-        });
+    app.engine('js', function (filePath, options, callback) {
+        var baseLayout = require(filePath)(Object.assign({}, options, {body: baseLayout, config}));
+        var pageLayout = require(__dirname + '/views/layout.js')(Object.assign({}, options, {body: baseLayout, config}));
+        callback(null, pageLayout);
     });
-    app.set('view engine', 'eco');
+    app.set('view engine', 'js');
     app.set('view options', {
         layout: 'layout'
     });
     app.use(bodyParser());
-    app.use(methodOverride());
     app.use(cookieParser());
     // app.use(app.router);
     app.use(express.static(__dirname + '/public'));

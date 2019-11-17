@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+module.exports = (opts) => console.log('jab', opts) || `<!DOCTYPE html>
 <html>
   <head>
     <title>typeto.me</title>
@@ -34,14 +34,14 @@
           p.insertBefore $('#input-box')
           ib.val ''
           lastInput = ""
-          socket.emit 'newline', token: '<%= @room %>'
+          socket.emit 'newline', token: '${opts.room}'
           ip.scrollBottom()
 
         sendBuffer = ->
           curbuf = $('#input-box').val()
           socket.emit 'resetBuffer',
             currentBuffer: curbuf
-            token: '<%= @room %>'
+            token: '${opts.room}'
 
         handleResetBuffer = (data) ->
           if data? and data.currentBuffer?
@@ -68,8 +68,8 @@
             bb.remove()
           b = ($ 'body')
           b.html '''
-            <p>Two people are already talking here. Did someone forget to close a window?<p><p><a href="/">Try starting a new chat.</a></p>
-          '''
+            <p>Two people are already talking here. Did someone forget to close a window?</p><p><a href="/">Try starting a new chat.</a></p>'''
+          
 
         removeCurrentLineClass = (scrollbackElem) ->
           ps = scrollbackElem.children 'p.current-line'
@@ -79,7 +79,7 @@
         insertNotice = (message) ->
           osb = ($ '#other-scrollback')
           removeCurrentLineClass osb
-          dnotice = ($ "<p class=\"notice\">#{message}</p><p class=\"current-line\"></p>")
+          dnotice = ($ "<p class=\\"notice\\">#{message}</p><p class=\\"current-line\\"></p>")
           osb.append dnotice
 
         disableInput = ->
@@ -117,7 +117,7 @@
           if oldInput == lastInput
             return
           res = dmp.patch_make(oldInput, val)
-          socket.emit 'diff', diff: res, token: '<%= @room %>'
+          socket.emit 'diff', diff: res, token: '${opts.room}'
           #diffBox res, ($ '#input-scrollback')
 
         handleNewline = ->
@@ -154,11 +154,10 @@
           return true
 
         ($ document).ready () ->
-          <% if @config.publicPort?: %>
-          socket = io.connect "http://<%= @config.publicHost %>:<%= @config.publicPort + 1%>"
-          <% else: %>
-          socket = io.connect "http://<%= @config.publicHost %>"
-          <% end %>
+          ${ opts.config.publicPort ? 
+          `socket = io.connect "http://${opts.config.publicHost}:${opts.config.publicPort + 1}"` :
+          `socket = io.connect "http://${opts.config.publicHost}"`
+          }
           socket.on 'joinResponse', (data) ->
             handleJoinResponse data
 
@@ -170,11 +169,11 @@
           socket.on 'resetBuffer', handleResetBuffer
           socket.on 'diff', (data) -> handleDiff data.diff
 
-          <% if @home? and @home: %>
-          chatButton = ($ '#chat')
-          chatButton.bind 'click', sendJoin
-          <% else: %>
-          otherbox = ($ '#them-box')
+          ${opts.home ?
+          `chatButton = ($ '#chat')
+          chatButton.bind 'click', sendJoin` :
+          
+          `otherbox = ($ '#them-box')
           talkbox = ($ '#you-box')
           if not talkbox?
             window.location = "/"
@@ -215,17 +214,17 @@
             <div class="scrollback" id="other-scrollback">
             <p>
             Give your friend this link:
-<a id="publiclink" href="<%= @publicLink %>"><%- @publicLink %></a> <!-- <a href="#" id="copy-publiclink">[copy]</a> -->
+<a id="publiclink" href="`+opts.publicLink+`">`+opts.publicLink+`</a> <!-- <a href="#" id="copy-publiclink">[copy]</a> -->
 
             </p>
             </div>
             '''
 
-          if <%= @otherUserJoined %>
+          if ${opts.otherUserJoined}
             handlePartnerJoin()
           talkbox.setBoxColor '#FFFFFF'
-          socket.emit 'requestJoin', token: '<%= @room %>'
-          <% end %>
+          socket.emit 'requestJoin', token: '${opts.room}'`}
+          
     </script>
     <style type="text/css">
         body {
@@ -344,12 +343,12 @@
     </style>
   </head>
 <body>
-<%- @body %>
-<% if @config? and @config.analyticsCode?: %>
+${opts.body && opts.body}
+${opts.config.analyticsCode && `
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', '<%= @config.analyticsCode %>']);
+  _gaq.push(['_setAccount', '${opts.config.analyticsCode}']);
   _gaq.push(['_trackPageview']);
 
   (function() {
@@ -358,7 +357,7 @@
     var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
   })();
 
-</script>
-<% end %>
+</script>`}
 </body>
-</html>
+</html>`;
+
