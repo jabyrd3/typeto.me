@@ -7,7 +7,6 @@
     let io = require('socket.io');
     let fs = require('fs');
     let config = {};
-    // io.settings['log level'] = 1;
     let Client = (function () {
         function Client(socket1) {
             this.socket = socket1;
@@ -125,7 +124,10 @@
             throw err;
         }
         config = JSON.parse(data.replace('\n', ''));
-        io = io(config.port + 1);
+        io = io(config.port + 1, {
+            origins: '*:*',
+            serveClient: true
+        });
         if (config.publicHost == null) {
             config.publicHost = 'localhost';
         }

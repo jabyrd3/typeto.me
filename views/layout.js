@@ -5,7 +5,7 @@ module.exports = (opts) => console.log('jab', opts) || `<!DOCTYPE html>
     <meta charset="utf-8" />
     <meta name="description" content="Talk in actual real time." />
     <link href='http://fonts.googleapis.com/css?family=Anonymous+Pro' rel='stylesheet' type='text/css'>
-    <script src="/bower_components/socket.io-client/socket.io.js"></script>
+    <script src="${opts.config.https ? 'https://' : 'http://'}${opts.config.host}:${opts.config.port + 1}/socket.io/socket.io.js"></script>
     <script src="/js/diff_match_patch.js"></script>
     <script src="/js/coffee-script.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>

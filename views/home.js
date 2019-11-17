@@ -8,6 +8,6 @@ module.exports = () => `<div id="homehome">
     </p>
     <p>
     <a href="https://github.com/lysol/typeto.me/">typeto.me @ github</a><br />
-    Made by <a href="http://derekarnold.net/">Derek Arnold</a> and <a href="http://3e.org/dmd/">Daniel Drucker</a>
+    Made by <a href="http://derekarnold.net/">Derek Arnold</a> and <a href="http://3e.org/dmd/">Daniel Drucker</a>. Maintained by <a href="https://jordanbyrd.com">Jordan Byrd</a>.
     </p>
 </div>`;

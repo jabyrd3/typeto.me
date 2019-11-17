@@ -9,20 +9,17 @@ This is made possible via [socket.io](http://socket.io) and Google's [js diff li
 # installation
 
 `git clone https://github.com/lysol/typeto.me`
-
 `cd typeto.me`
 
-`npm install && bower install`
-
+`npm install`
+`<modify config.json-dist with values for your deployment and move to config.json>`
 `node app.js`
 
-# notes
-You should consider using a process manager like forever or PM2 to keep this running. If you use PM2, make sure to only give it a single process. This code won't work across multiple processes.
 
 # todo
 - [ ] rewrite frontend coffeescript and split it out from layout.eco
 
-- [ ] get rid of eco templates, replace with simple JS global var injection
+- [x] get rid of eco templates, replace with simple JS global var injection
 
 (C) 2016 Derek Arnold under the MIT License
 
